@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qwen-TTS PoC - Voice Generator</title>
+  <meta name="description" content="Generate an AI placeholder voice using Qwen-TTS DashScope API." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <main class="container">
+    <div class="glass-card">
+      <header class="header">
+        <h1>Qwen-TTS Generator</h1>
+        <p>Synthesize personalized audio for the 2026 World Cup.</p>
+      </header>
+
+      <form id="tts-form" class="form-container">
+        <div class="input-group">
+          <label for="api-key">DashScope API Key</label>
+          <input type="password" id="api-key" name="apiKey" placeholder="sk-..." required autocomplete="off" />
+          <p class="help-text">Your API key is only used locally and not saved.</p>
+        </div>
+
+        <div class="input-group">
+          <label for="user-name">Your Name</label>
+          <input type="text" id="user-name" name="userName" placeholder="e.g. Carlos" required autocomplete="off" />
+        </div>
+
+        <button type="submit" id="submit-btn" class="btn primary">
+          <span class="btn-text">Generate Audio</span>
+          <span class="spinner hidden"></span>
+        </button>
+      </form>
+
+      <div id="result-container" class="result-container hidden">
+        <hr class="divider" />
+        <h2>Generated Audio</h2>
+        
+        <div class="audio-player-wrapper">
+          <audio id="audio-player" controls preload="auto"></audio>
+        </div>
+
+        <div class="actions">
+          <a id="download-btn" class="btn secondary" download="qwen-tts-synthesis.wav" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            Download Audio
+          </a>
+        </div>
+      </div>
+      
+      <div id="error-container" class="error-container hidden">
+        <p id="error-message"></p>
+      </div>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
