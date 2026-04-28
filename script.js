@@ -58,14 +58,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const targetAPI = 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation';
     const endpoint = 'https://cors-anywhere.herokuapp.com/' + targetAPI;
 
-    const textToSynthesize = `Hola ${userName}, haz las maletas y prepárate para el Mundial de Fútbol de 2026, pues eres uno de los convocados.`;
+    const textsToSynthesize = [
+      `Faltavas tu ${userName}! A nossa seleção precisa de ti para os momentos decisivos. Vive a seleção de corpo e alma.`,
+      `Precisamos da tua energia ${userName} e juntamente com a Sagres vamos viver cada momento de corpo e alma.`,
+      `${userName} Fazes parte do grupo. A seleção conta contigo para fazeres a diferença e viveres cada emoção de corpo e alma.`,
+    ];
+    const textToSynthesize = textsToSynthesize[Math.floor(Math.random() * textsToSynthesize.length)];
 
     const payload = {
-      model: 'qwen3-tts-flash',
+      model: 'qwen3-tts-vc-2026-01-22',
       input: {
         text: textToSynthesize,
-        voice: 'Ryan',
-        language_type: 'Spanish' // Specified as per API documentation
+        voice: 'qwen-tts-vc-roberto_pt-voice-20260429004312101-aab6',
+        language_type: 'Portuguese' // Specified as per API documentation
       }
     };
 
