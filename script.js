@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('tts-form');
-  const apiKeyInput = document.getElementById('api-key');
   const userNameInput = document.getElementById('user-name');
 
   const submitBtn = document.getElementById('submit-btn');
@@ -14,97 +13,66 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorContainer = document.getElementById('error-container');
   const errorMessage = document.getElementById('error-message');
 
+  // Revoke any previous object URL to avoid memory leaks
+  let currentObjectUrl = null;
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const apiKey = apiKeyInput.value.trim();
     const userName = userNameInput.value.trim();
-
-    if (!apiKey || !userName) {
-      showError('Please provide both an API key and your name.');
+    if (!userName) {
+      showError('Please enter your name.');
       return;
     }
 
-    // Reset UI state
     hideError();
     resultContainer.classList.add('hidden');
 
-    // Set loading state
+    // Revoke previous audio blob
+    if (currentObjectUrl) {
+      URL.revokeObjectURL(currentObjectUrl);
+      currentObjectUrl = null;
+    }
+
     setLoading(true);
 
     try {
-      const audioUrl = await generateAudio(apiKey, userName);
+      const audioUrl = await generateAudio(userName);
 
-      // Update UI with result
       audioPlayer.src = audioUrl;
       downloadBtn.href = audioUrl;
-
-      // Auto-play might be blocked by browsers, but we load it
       audioPlayer.load();
 
       resultContainer.classList.remove('hidden');
-
     } catch (error) {
       console.error('TTS Error:', error);
-      showError(error.message || 'Failed to generate audio. Please check your API key and try again.');
+      showError(error.message || 'Failed to generate audio. Make sure the server is running.');
     } finally {
       setLoading(false);
     }
   });
 
-  async function generateAudio(apiKey, userName) {
-    // The DashScope API blocks browser origins due to CORS policy to protect API keys.
-    // We bypass this using cors-anywhere for this frontend PoC.
-    const targetAPI = 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation';
-    const endpoint = 'https://cors-anywhere.herokuapp.com/' + targetAPI;
-
-    const textsToSynthesize = [
-      `Faltavas tu ${userName}! A nossa seleção precisa de ti para os momentos decisivos. Vive a seleção de corpo e alma.`,
-      `Precisamos da tua energia ${userName} e juntamente com a Sagres vamos viver cada momento de corpo e alma.`,
-      `${userName} Fazes parte do grupo. A seleção conta contigo para fazeres a diferença e viveres cada emoção de corpo e alma.`,
-    ];
-    const textToSynthesize = textsToSynthesize[Math.floor(Math.random() * textsToSynthesize.length)];
-
-    const payload = {
-      model: 'qwen3-tts-vc-2026-01-22',
-      input: {
-        text: textToSynthesize,
-        voice: 'qwen-tts-vc-roberto_pt-voice-20260429004312101-aab6',
-        language_type: 'Portuguese' // Specified as per API documentation
-      }
-    };
-
-    const response = await fetch(endpoint, {
+  async function generateAudio(userName) {
+    const response = await fetch('/api/generate', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: JSON.stringify(payload)
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: userName }),
     });
 
     if (!response.ok) {
-      if (response.status === 403 && response.url.includes("cors-anywhere.herokuapp.com")) {
-        throw new Error('CORS Anywhere needs temporary access. Open a new tab, go to: https://cors-anywhere.herokuapp.com/corsdemo, click "Request temporary access to the demo server", then try again here.');
-      }
       let errorDetails = '';
       try {
         const errorJson = await response.json();
-        errorDetails = errorJson.message || errorJson.code;
-      } catch (e) {
-        // Ignored
+        errorDetails = errorJson.error || errorJson.message;
+      } catch (_) {
+        // ignore parse error
       }
-      throw new Error(`API returned ${response.status}: ${errorDetails || response.statusText}`);
+      throw new Error(errorDetails || `Server returned ${response.status}: ${response.statusText}`);
     }
 
-    const data = await response.json();
-
-    if (data.output && data.output.audio && data.output.audio.url) {
-      return data.output.audio.url;
-    } else {
-      throw new Error('Unexpected response format from the API.');
-    }
+    const blob = await response.blob();
+    currentObjectUrl = URL.createObjectURL(blob);
+    return currentObjectUrl;
   }
 
   function setLoading(isLoading) {
