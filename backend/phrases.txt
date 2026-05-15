@@ -1,5 +1,5 @@
 # One phrase per line. Keep the {name} placeholder in each template.
-Faltavas tu {name}! A nossa seleção precisa de ti para os momentos decisivos. Vive a seleção de corpo e alma.
-Precisamos da tua energia {name} e juntamente com a Sagres vamos viver cada momento de corpo e alma.
-{name} Fazes parte do grupo. A seleção conta contigo para fazeres a diferença e viveres cada emoção de corpo e alma.
+Faltavas tu {name}! A nossa seleção precisa de ti para os momentos decisivos. Vive a seleção de copo e alma.
+{name}! Precisamos da tua energia e juntamente com a Sagres vamos viver cada momento de copo e alma.
+{name}! Fazes parte do grupo. A seleção conta contigo para fazeres a diferença e viveres cada emoção de copo e alma.
 
