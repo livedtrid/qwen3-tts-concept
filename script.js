@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('tts-form');
   const userNameInput = document.getElementById('user-name');
+  const apiBaseUrl = getApiBaseUrl();
 
   const submitBtn = document.getElementById('submit-btn');
   const btnText = submitBtn.querySelector('.btn-text');
@@ -53,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   async function generateAudio(userName) {
-    const response = await fetch('/api/generate', {
+    const response = await fetch(`${apiBaseUrl}/api/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: userName }),
@@ -95,5 +96,29 @@ document.addEventListener('DOMContentLoaded', () => {
   function hideError() {
     errorContainer.classList.add('hidden');
     errorMessage.textContent = '';
+  }
+
+  function getApiBaseUrl() {
+    const configuredBaseUrl = document
+      .querySelector('meta[name="qwen-tts-api-base-url"]')
+      ?.content
+      ?.trim();
+
+    if (configuredBaseUrl) {
+      return configuredBaseUrl.replace(/\/$/, '');
+    }
+
+    const { protocol, hostname, port } = window.location;
+    const isFileProtocol = protocol === 'file:';
+    const isOtherLocalDevOrigin =
+      (hostname === 'localhost' || hostname === '127.0.0.1') &&
+      port &&
+      port !== '5000';
+
+    if (isFileProtocol || isOtherLocalDevOrigin) {
+      return 'http://localhost:5000';
+    }
+
+    return '';
   }
 });

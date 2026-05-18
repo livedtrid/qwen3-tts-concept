@@ -4,7 +4,7 @@ This folder is a backend-only package for the Qwen3-TTS PoC.
 
 ## Files
 
-- `server.py` - Flask API (`POST /api/generate`, `GET /health`)
+- `server.py` - Flask API (`POST /api/generate`, `GET /health`, `GET /api/phrases`) + optional frontend static serving
 - `qwen_tts.py` - DashScope TTS call + WAV download logic
 - `phrases.txt` - editable phrase templates (one phrase per line)
 - `requirements.txt` - backend dependencies
@@ -27,13 +27,12 @@ python server.py
 
 Server defaults to `http://localhost:5000`.
 
+If this backend sits inside the main repo, it will automatically serve the frontend files from the parent folder, so you can open `http://localhost:5000` and test the UI locally without duplicating backend files at the repo root.
+
 ## Smoke Test (PowerShell)
 
 ```powershell
-Invoke-WebRequest `
-  -Uri "http://localhost:5000/api/generate" `
-  -Method POST `
-  -ContentType "application/json" `
-  -Body '{"name":"Carlos"}' `
-  -OutFile "sample.wav"
+./smoke_test.ps1 -Name "Carlos"
+./smoke_test.ps1 -PhraseIndex 2 -OutFile "phrase-2.wav"
+./smoke_test.ps1 -AllPhrases -Name "Carlos"
 ```

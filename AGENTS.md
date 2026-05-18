@@ -8,32 +8,31 @@ A frontend + Flask backend proof-of-concept for Alibaba Cloud **Qwen3-TTS**. It 
 
 | File | Role |
 |---|---|
-| `server.py` | Flask dev server - serves static files + `/api/generate` endpoint |
-| `qwen_tts.py` | Core TTS logic (`generate_audio()`) + standalone CLI |
-| `phrases.txt` | Phrase templates (one per line, include `{name}`) |
-| `requirements.txt` | Python dependencies: `flask`, `flask-cors` |
-| `backend/` | Backend-only handoff bundle for teammates |
+| `backend/server.py` | Flask dev server - serves `/api/generate`, `/api/phrases`, and optionally the root frontend |
+| `backend/qwen_tts.py` | Core TTS logic (`generate_audio()`) + standalone CLI |
+| `backend/phrases.txt` | Phrase templates (one per line, include `{name}`) |
+| `backend/requirements.txt` | Python dependencies: `flask`, `flask-cors` |
 | `index.html` | Single-page UI shell (no API key input) |
-| `script.js` | Posts `{name}` to `/api/generate`, receives WAV blob |
+| `script.js` | Posts `{name}` to the backend API, receives WAV blob |
 | `styles.css` | All styles; CSS custom properties in `:root` |
 
-Data flow: user submits name -> `POST /api/generate` -> `server.py` calls `generate_audio()` from `qwen_tts.py` -> DashScope API -> WAV bytes streamed back -> frontend creates a `Blob` URL for `<audio>` + download link.
+Data flow: user submits name -> `POST /api/generate` -> `backend/server.py` calls `generate_audio()` from `backend/qwen_tts.py` -> DashScope API -> WAV bytes streamed back -> frontend creates a `Blob` URL for `<audio>` + download link.
 
 ## Running the Project
 
 ### Web app (Flask)
 ```powershell
-Copy-Item .env.example .env
-pip install -r requirements.txt
-python server.py
+Copy-Item backend/.env.example backend/.env
+pip install -r backend/requirements.txt
+python backend/server.py
 # open http://localhost:5000
 ```
 
 ### Python CLI
 ```powershell
-python qwen_tts.py --name "Carlos" --api-key "sk-..."
+python backend/qwen_tts.py --name "Carlos" --api-key "sk-..."
 # or with env var set:
-python qwen_tts.py --name "Carlos"
+python backend/qwen_tts.py --name "Carlos"
 ```
 
 ## API Integration Details
@@ -43,11 +42,11 @@ python qwen_tts.py --name "Carlos"
 - **Voice ID:** `qwen-tts-vc-roberto_pt-voice-20260429004312101-aab6`
 - **Auth:** `Authorization: Bearer <api-key>` (server-side env `DASHSCOPE_API_KEY`)
 - **Response audio path:** `data.output.audio.url`
-- Text selection: random line from `phrases.txt`, formatted with `{name}`
+- Text selection: random line from `backend/phrases.txt`, formatted with `{name}`
 
 ## Environment Config
 
-`qwen_tts.py` reads `.env` automatically (if present):
+`backend/qwen_tts.py` reads `backend/.env` automatically (if present):
 
 - `DASHSCOPE_API_KEY`
 - `API_ENDPOINT`
@@ -55,4 +54,4 @@ python qwen_tts.py --name "Carlos"
 - `VOICE`
 - `LANGUAGE`
 
-Phrase templates are edited in `phrases.txt` (and `backend/phrases.txt` in the backend handoff bundle).
+Phrase templates are edited in `backend/phrases.txt`.
