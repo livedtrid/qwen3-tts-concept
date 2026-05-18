@@ -7,6 +7,7 @@ This folder is a backend-only package for the Qwen3-TTS PoC.
 - `server.py` - Flask API (`POST /api/generate`, `GET /health`, `GET /api/phrases`) + optional frontend static serving
 - `qwen_tts.py` - DashScope TTS call + WAV download logic
 - `phrases.txt` - editable phrase templates (one phrase per line)
+- `audio/` - suffix WAV files used by `CHEAP_MODE` concatenation
 - `requirements.txt` - backend dependencies
 - `.env.example` - environment variable template
 - `API_CONTRACT.md` - request/response contract for integration
@@ -17,8 +18,11 @@ This folder is a backend-only package for the Qwen3-TTS PoC.
    - `Copy-Item .env.example .env`
 2. Fill `.env` with your real `DASHSCOPE_API_KEY`.
    - Optional tuning keys: `API_ENDPOINT`, `MODEL`, `VOICE`, `LANGUAGE`
+   - Optional feature flag: `CHEAP_MODE=true` (step 2 behavior: output = generated raw text audio + random WAV from `audio/`)
 3. Edit `phrases.txt` (one phrase per line, use `{name}` placeholder).
-4. Install deps and run server.
+4. If `CHEAP_MODE=true`, place one or more `.wav` files in `audio/`.
+   - The server auto-converts `audio/` WAVs to match generated TTS WAV format when needed (mono/stereo PCM supported).
+5. Install deps and run server.
 
 ```powershell
 pip install -r requirements.txt

@@ -1,6 +1,6 @@
 param(
   [string]$BaseUrl = "http://localhost:5000",
-  [string]$Name = "Carlos",
+  [string]$Name = "Rita",
   [string]$OutFile = "sample.wav",
   [int]$PhraseIndex,
   [switch]$AllPhrases

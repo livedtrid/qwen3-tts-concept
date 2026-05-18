@@ -18,6 +18,9 @@ Generate a Portuguese TTS clip and return a WAV file.
 
 - `name` is required.
 - `phraseIndex` is optional and 1-based. When omitted, the backend picks a random phrase.
+- When server env `CHEAP_MODE=true`, `phraseIndex` is ignored and output audio is composed as:
+  - generated TTS from raw `name` text
+  - followed by one random WAV from `backend/audio/` (auto-converted to match generated WAV format when needed)
 
 ### Success Response
 
@@ -29,6 +32,7 @@ Generate a Portuguese TTS clip and return a WAV file.
 
 - `400` invalid payload (e.g., missing `name`)
 - `500` missing server configuration (`DASHSCOPE_API_KEY`)
+- `500` invalid `CHEAP_MODE` local audio setup (missing WAV files or incompatible WAV formats)
 - `502` upstream DashScope/API/network failure
 
 Error format:

@@ -176,6 +176,14 @@ def generate_audio(
     return output_path
 
 
+def generate_audio_from_text(text: str, api_key: str, output_path: str = OUTPUT_FILE) -> str:
+    """Synthesize an audio clip from raw text and save it to *output_path*."""
+    audio_url = _call_dashscope_tts(text=text, api_key=api_key)
+    urllib.request.urlretrieve(audio_url, output_path)
+
+    return output_path
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate a personalized Portuguese TTS clip via Qwen3-TTS."
