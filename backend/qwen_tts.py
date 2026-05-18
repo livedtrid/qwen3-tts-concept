@@ -59,9 +59,9 @@ OUTPUT_FILE = "qwen-tts-synthesis.wav"
 PHRASES_FILE = os.path.join(BASE_DIR, "phrases.txt")
 
 DEFAULT_PHRASES = [
-    "Faltavas tu {name}! A nossa seleção precisa de ti para os momentos decisivos. Vive a seleção de corpo e alma.",
-    "Precisamos da tua energia {name} e juntamente com a Sagres vamos viver cada momento de corpo e alma.",
-    "{name} Fazes parte do grupo. A seleção conta contigo para fazeres a diferença e viveres cada emoção de corpo e alma.",
+    "{name}! Faltavas tu. A nossa seleção precisa de ti para os momentos decisivos. Vive a seleção de corpo e alma.",
+    "{name}! Precisamos da tua energia e juntamente com a Sagres vamos viver cada momento de corpo e alma.",
+    "{name}! Fazes parte do grupo. A seleção conta contigo para fazeres a diferença e viveres cada emoção de corpo e alma.",
 ]
 
 
